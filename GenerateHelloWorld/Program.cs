@@ -1,5 +1,8 @@
 ﻿using System;
 using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.IO;
+using System.Text;
 
 namespace GenerateHelloWorld
 {
@@ -25,8 +28,21 @@ namespace GenerateHelloWorld
 
         static void Main(string[] args)
         {
+            CodeNamespace progNamespace = BuildProgram();
+            var compilerOptions = new CodeGeneratorOptions()
+            {
+                IndentString = "    ",
+                BracingStyle = "C",
+                BlankLinesBetweenMembers = false
+            };
+            var codeText = new StringBuilder();
+            using (var codeWriter = new StringWriter(codeText))
+            {
+                CodeDomProvider.CreateProvider("C#").GenerateCodeFromNamespace(progNamespace, codeWriter, compilerOptions);
+            };
+            var script = codeText.ToString();
 
-
+            Console.WriteLine(script);
             Console.ReadLine();
         }
     }
